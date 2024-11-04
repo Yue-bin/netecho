@@ -1,4 +1,4 @@
-#!/usr/bin/env lua5.4
+#!/usr/bin/env lua
 
 local socket = require("socket")
 local url = require("socket.url")
