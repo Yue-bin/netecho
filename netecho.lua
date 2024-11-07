@@ -3,7 +3,9 @@
 local socket = require("socket")
 local url = require("socket.url")
 arg[2] = tonumber(arg[2]) or 0
-if (arg[1] == "udp" or arg[1] == "tcp") and (arg[2] > 0 and arg[2] < 65536) then
+-- 兼容性考虑：若不支持math.tointeger，则跳过整型检查
+math.tointeger = math.tointeger or function() return true end
+if (arg[1] == "udp" or arg[1] == "tcp") and (math.tointeger(arg[2]) and arg[2] > 0 and arg[2] < 65536) then
     io.write("running in ", arg[1], " mode, listening on port ", arg[2], "\n")
     if arg[1] == "udp" then
         -- udp
