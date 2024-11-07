@@ -2,16 +2,27 @@
 
 local socket = require("socket")
 local url = require("socket.url")
-arg[2] = tonumber(arg[2]) or 0
+
+local proto = "tcp"
+local port = 0
+
+if not arg[2] then
+    port = tonumber(arg[1]) or 0
+else
+    proto = arg[1]
+    port = tonumber(arg[2]) or 0
+end
+
 -- 兼容性考虑：若不支持math.tointeger，则跳过整型检查
 math.tointeger = math.tointeger or function() return true end
-if (arg[1] == "udp" or arg[1] == "tcp") and (math.tointeger(arg[2]) and arg[2] > 0 and arg[2] < 65536) then
-    io.write("running in ", arg[1], " mode, listening on port ", arg[2], "\n")
-    if arg[1] == "udp" then
+if (proto == "udp" or proto == "tcp") and (math.tointeger(port) and port > 0 and port < 65536) then
+    io.write("running in ", proto, " mode, listening on port ", port, "\n")
+    if proto == "udp" then
         -- udp
         local udp = socket.udp()
-        udp:setsockname("*", arg[2])
+        udp:setsockname("*", port)
         udp:settimeout(0)
+        port = nil
         while true do
             local data, ip, port = udp:receivefrom()
             if data then
@@ -23,11 +34,12 @@ if (arg[1] == "udp" or arg[1] == "tcp") and (math.tointeger(arg[2]) and arg[2] >
             end
             socket.sleep(0.01)
         end
-    elseif arg[1] == "tcp" then
+    elseif proto == "tcp" then
         -- tcp
         local tcp = socket.tcp()
-        tcp:bind("*", arg[2])
+        tcp:bind("*", port)
         tcp:listen()
+        port = nil
         while true do
             local client = tcp:accept()
             local ip, port, nettype = client:getpeername()

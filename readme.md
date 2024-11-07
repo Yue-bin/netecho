@@ -15,5 +15,5 @@ git clone https://github.com/Yue-bin/netecho.git
 ## 使用
 
 ```bash
-netecho [udp/tcp] port
+netecho [tcp|udp] port
 ```
